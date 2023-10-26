@@ -22,6 +22,13 @@ This application is a tool to generate the needed files
 to quickly create a Cobra application.`,
 	Run: func(cmd *cobra.Command, args []string) {
 		fmt.Println("init called")
+		argss := cmd.Args
+		fmt.Println(argss)
+
+		if _, err := os.Stat(Config.InitFolder); !os.IsNotExist(err) {
+			fmt.Printf("%v folder already exist \n", Config.InitFolder)
+			return
+		}
 
 		if err := createInitAndObjectFolders(); err != nil {
 			panic(err)
@@ -48,11 +55,12 @@ func init() {
 }
 
 func createInitAndObjectFolders() error {
-	return os.MkdirAll(".init/objects", os.ModePerm)
+	path := fmt.Sprintf("%v/objects", Config.InitFolder)
+	return os.MkdirAll(path, os.ModePerm)
 }
 
 func createRefFile() error {
-	path := "./.init/ref.txt"
+	path := fmt.Sprintf("./%v/ref.txt", Config.InitFolder)
 
 	file, err := os.Create(path)
 	if err != nil {
